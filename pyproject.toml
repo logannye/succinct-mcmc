@@ -3,22 +3,23 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "succinct-mcmc"
+name = "rewind-engine"
 version = "0.1.0"
-description = "√T-space Markov chain Monte Carlo engine with deterministic replay"
+description = "Git for long stochastic runs: time-travel replay over seeded simulations"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
-authors = [{ name = "Succinct MCMC Authors" }]
+authors = [{ name = "Logan Nye" }]
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved",
-    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Scientific/Engineering",
 ]
 dependencies = []
 
@@ -27,22 +28,22 @@ numpy = ["numpy>=1.21"]
 dev = [
     "pytest>=7",
     "numpy>=1.21",
+    "hypothesis>=6",
 ]
 
 [project.scripts]
-succinct-mcmc = "succinct_mcmc.cli:main"
+rewind = "rewind.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/logannye/succinct-mcmc"
-Documentation = "https://github.com/logannye/succinct-mcmc/tree/main/docs"
-Source = "https://github.com/logannye/succinct-mcmc"
+Homepage = "https://github.com/logannye/rewind"
+Source = "https://github.com/logannye/rewind"
 
 [tool.setuptools.package-dir]
 "" = "src"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["succinct_mcmc*"]
+include = ["rewind*"]
 
 [tool.pytest.ini_options]
 addopts = "-ra"
