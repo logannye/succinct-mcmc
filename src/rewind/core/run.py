@@ -111,10 +111,7 @@ class Run:
         child = record(self.step_fn, x, child_n, child_seed,
                        block_size=None, backend=self.backend, observe=self.observe,
                        step_id=self.step_id)
-        try:
-            child.parent_hash = self.content_hash()
-        except Exception:
-            child.parent_hash = None
+        child.parent_hash = self.content_hash()
         child.branch_point = t
         return child
 
