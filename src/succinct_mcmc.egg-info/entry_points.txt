@@ -1,2 +1,0 @@
-[console_scripts]
-succinct-mcmc = succinct_mcmc.cli:main
