@@ -30,3 +30,11 @@ class NondeterministicReplayError(RewindError):
 
 class ArtifactIntegrityError(RewindError):
     """An artifact failed its content-hash or schema check on load."""
+
+
+class UnsafeArtifactError(RewindError):
+    """Refused to unpickle a .replay artifact from a potentially untrusted source.
+
+    Pickle-encoded anchors execute arbitrary code on load. Pass allow_pickle=True
+    only if you trust the artifact's origin.
+    """

@@ -130,10 +130,16 @@ def load_meta(path) -> dict:
         return json.loads(zf.read("meta.json"))
 
 
-def load(path, step_fn, *, backend: Optional[str] = None):
+def load(path, step_fn, *, backend: Optional[str] = None, allow_pickle: bool = False):
+    """Reconstruct a Run from a .replay artifact.
+
+    allow_pickle gates the arbitrary-Python (pickle) anchor encoding, which
+    executes code on load. It defaults to False; numpy/.npz artifacts are safe
+    and load without opting in. Only set allow_pickle=True for trusted sources.
+    """
     from ..core.anchors import AnchorStore
     from ..core.run import Run
-    from ..errors import ArtifactIntegrityError
+    from ..errors import ArtifactIntegrityError, UnsafeArtifactError
 
     path = Path(path)
     with zipfile.ZipFile(path) as zf:
@@ -145,6 +151,13 @@ def load(path, step_fn, *, backend: Optional[str] = None):
     stored_hash = meta.pop("content_hash", None)
     if meta.get("name") != "rewind" or meta.get("format_version") != FORMAT_VERSION:
         raise ArtifactIntegrityError("not a rewind v1 artifact")
+
+    # SECURITY: refuse to unpickle before we have done so, unless opted in.
+    if encoding == "pickle" and not allow_pickle:
+        raise UnsafeArtifactError(
+            f"{path} stores arbitrary-Python anchors via pickle; loading it executes "
+            f"code. Pass allow_pickle=True only if you trust the artifact's source."
+        )
 
     # rebuild store, recompute hash from canonical anchor bytes, compare
     anchors = _decode_anchors(encoding, anchor_blob)

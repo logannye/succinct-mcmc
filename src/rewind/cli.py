@@ -12,6 +12,7 @@ import json
 import sys
 from typing import Callable, Optional
 
+from .errors import RewindError
 from .io.artifact import load, load_meta
 
 
@@ -36,7 +37,7 @@ def _cmd_info(args) -> int:
 def _cmd_get(args) -> int:
     meta = load_meta(args.artifact)
     step_fn = _import_step(meta.get("step_id"))
-    run = load(args.artifact, step_fn=step_fn)
+    run = load(args.artifact, step_fn=step_fn, allow_pickle=args.allow_pickle)
     print(repr(run.get(args.t)))
     return 0
 
@@ -44,7 +45,7 @@ def _cmd_get(args) -> int:
 def _cmd_verify(args) -> int:
     meta = load_meta(args.artifact)
     step_fn = _import_step(meta.get("step_id"))
-    run = load(args.artifact, step_fn=step_fn)
+    run = load(args.artifact, step_fn=step_fn, allow_pickle=args.allow_pickle)
     run.verify(full=True)
     print("OK: artifact replays bit-for-bit on this machine")
     return 0
@@ -61,16 +62,20 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_get = sub.add_parser("get", help="regenerate state at tick t")
     p_get.add_argument("artifact")
     p_get.add_argument("t", type=int)
+    p_get.add_argument("--allow-pickle", action="store_true",
+                       help="permit loading pickle-encoded anchors (executes code; trusted artifacts only)")
     p_get.set_defaults(func=_cmd_get)
 
     p_verify = sub.add_parser("verify", help="check bit-exact replay on this machine")
     p_verify.add_argument("artifact")
+    p_verify.add_argument("--allow-pickle", action="store_true",
+                          help="permit loading pickle-encoded anchors (executes code; trusted artifacts only)")
     p_verify.set_defaults(func=_cmd_verify)
 
     args = parser.parse_args(argv)
     try:
         return args.func(args)
-    except (ValueError, ImportError, AttributeError) as exc:
+    except (RewindError, ValueError, ImportError, AttributeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 

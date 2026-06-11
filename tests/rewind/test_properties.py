@@ -26,6 +26,6 @@ def test_roundtrip_preserves_get(tmp_path_factory, n_steps, seed):
     run = rewind.record(_walk, init_state=0, n_steps=n_steps, seed=seed)
     path = tmp_path_factory.mktemp("rt") / "r.replay"
     run.save(path)
-    loaded = rewind.load(path, step_fn=_walk)
+    loaded = rewind.load(path, step_fn=_walk, allow_pickle=True)
     assert loaded.get(n_steps - 1) == run.get(n_steps - 1)
     assert loaded.verify(full=True)

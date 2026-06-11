@@ -12,7 +12,7 @@ def test_roundtrip_get_is_bit_identical(tmp_path):
                         observe={"x": lambda s: s})
     path = tmp_path / "run.replay"
     run.save(path)
-    loaded = rewind.load(path, step_fn=walk)
+    loaded = rewind.load(path, step_fn=walk, allow_pickle=True)  # trusted, self-generated
     for t in (0, 1, 7, 8, 13, 31, 32, 50, 63):
         assert loaded.get(t) == run.get(t)
     assert loaded.observed["x"]["count"] == 64
@@ -44,7 +44,7 @@ def test_corrupted_artifact_detected(tmp_path):
         for n, b in data.items():
             zf.writestr(n, b)
     with pytest.raises(ArtifactIntegrityError):
-        rewind.load(path, step_fn=walk)
+        rewind.load(path, step_fn=walk, allow_pickle=True)  # opt in so the hash check is reached
 
 
 def test_numpy_anchor_roundtrip(tmp_path):

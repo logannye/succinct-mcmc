@@ -26,7 +26,7 @@ def test_cli_info_needs_no_step(tmp_path, capsys):
 
 def test_cli_get_imports_step_and_matches(tmp_path, capsys):
     path, run = _make(tmp_path)
-    rc = main(["get", str(path), "17"])
+    rc = main(["get", str(path), "17", "--allow-pickle"])
     out = capsys.readouterr().out
     assert rc == 0
     assert str(run.get(17)) in out
@@ -34,9 +34,16 @@ def test_cli_get_imports_step_and_matches(tmp_path, capsys):
 
 def test_cli_verify_ok(tmp_path, capsys):
     path, _ = _make(tmp_path)
-    rc = main(["verify", str(path)])
+    rc = main(["verify", str(path), "--allow-pickle"])
     assert rc == 0
     assert "OK" in capsys.readouterr().out
+
+
+def test_cli_get_refuses_pickle_without_optin(tmp_path, capsys):
+    path, _ = _make(tmp_path)
+    rc = main(["get", str(path), "17"])
+    assert rc != 0
+    assert "allow_pickle" in capsys.readouterr().err
 
 
 def test_cli_get_without_importable_step_errors(tmp_path, capsys):
