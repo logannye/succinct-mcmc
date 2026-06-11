@@ -42,7 +42,7 @@ Source = "https://github.com/logannye/succinct-mcmc"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["succinct_mcmc*"]
+include = ["rewind*", "succinct_mcmc*"]
 
 [tool.pytest.ini_options]
 addopts = "-ra"
