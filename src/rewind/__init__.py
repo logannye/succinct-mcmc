@@ -7,9 +7,11 @@ from .errors import (
     NondeterministicStepError,
     RewindError,
 )
+from . import io
+from .io.artifact import load
 
 __version__ = "0.1.0"
 __all__ = [
-    "record", "Run", "RewindError", "NondeterministicStepError",
+    "record", "load", "Run", "io", "RewindError", "NondeterministicStepError",
     "NondeterministicReplayError", "ArtifactIntegrityError", "__version__",
 ]
