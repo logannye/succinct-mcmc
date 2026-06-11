@@ -31,6 +31,7 @@ dev = [
 
 [project.scripts]
 succinct-mcmc = "succinct_mcmc.cli:main"
+rewind = "rewind.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/logannye/succinct-mcmc"
